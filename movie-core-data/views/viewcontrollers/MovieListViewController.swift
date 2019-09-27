@@ -151,7 +151,7 @@ class MovieListViewController: UIViewController {
 
 extension MovieListViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return fetchResultController.sections?.count ?? 1
+        return fetchResultController.sections?.count ?? 6
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return fetchResultController.sections?[section].numberOfObjects ?? 0

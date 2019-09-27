@@ -33,13 +33,15 @@ class MovieDetailsViewController: UIViewController {
         return ui
     }()
     
-    var movieId : Int = 0
+	@IBOutlet weak var btnBookmark: UIBarButtonItem!
+	var movieId : Int = 0
+	var isBookmarked = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         initView()
-        
+        initBookmark()
         if NetworkUtils.checkReachable() == false {
             Dialog.showAlert(viewController: self, title: "Error", message: "No Internet Connection!")
             if let data = MovieVO.getMovieById(movieId: movieId) {
@@ -69,7 +71,10 @@ class MovieDetailsViewController: UIViewController {
         }
         
     }
-    
+	func initBookmark(){
+		isBookmarked = BookmarkVO.getIsBookmarked(movieId: movieId)
+		btnBookmark.tintColor = isBookmarked ? #colorLiteral(red: 1, green: 0.3098039216, blue: 0.2666666667, alpha: 1) : #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+	}
     fileprivate func initView() {
         self.view.addSubview(scrollViewPrimary)
         scrollViewPrimary.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 0).isActive = true
@@ -126,8 +131,18 @@ class MovieDetailsViewController: UIViewController {
         stackViewTemp.addArrangedSubview(ratinTitle)
         stackViewTemp.addArrangedSubview(WidgetGenerator.getUILabelMovieInfo("\(data.vote_average)"))
         
-        
-        
     }
+	
     
+	@IBAction func btnBookmark(_ sender: Any) {
+		if isBookmarked {
+            isBookmarked = false
+            btnBookmark.tintColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+            BookmarkVO.deleteBookmarkEntity(data: movieId, context: CoreDataStack.shared.viewContext)
+        } else {
+            isBookmarked = true
+            btnBookmark.tintColor = #colorLiteral(red: 1, green: 0.3098039216, blue: 0.2666666667, alpha: 1)
+			BookmarkVO.saveBookmarkEntity(data: movieId, context: CoreDataStack.shared.viewContext)
+        }
+	}
 }
